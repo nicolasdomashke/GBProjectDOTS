@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using Unity.Transforms;
 using Unity.Mathematics;
-
+using Unity.Physics;
 
 public partial class MoveSystem : SystemBase
 {
@@ -21,22 +21,24 @@ public partial class MoveSystem : SystemBase
         bool isDashPressed = inputSystem.Player.Dash.WasPressedThisFrame();
         float dTime = SystemAPI.Time.DeltaTime;
 
-        Entities.WithAll<InputEnabled>().ForEach((ref LocalTransform transform, ref Dashable dash, in MovementSpeed moveSpeed) =>
+        Entities.WithAll<InputEnabled>().ForEach((ref LocalTransform transform, ref Dashable dash, ref PhysicsVelocity velocity, in MovementSpeed moveSpeed) =>
         {
             if (dash.dashBoostCurrent > 0f)
             {
-                float3 pos = transform.Position;
+                //float3 pos = transform.Position;
                 float3 lookVector = transform.Forward();
-                pos += lookVector * moveSpeed.speed * dTime * dash.dashBoost;
-                transform.Position = pos;
+                //pos += lookVector * moveSpeed.speed * dTime * dash.dashBoost;
+                //transform.Position = pos;
+                velocity.Linear = lookVector *  dash.dashBoost;
                 dash.dashBoostCurrent -= dTime;
             }
             else
             {
-                float3 pos = transform.Position;
+                //float3 pos = transform.Position;
                 float3 lookVector = new float3(moveInput.x, 0f, moveInput.y);
-                pos += lookVector * moveSpeed.speed * dTime;
-                transform.Position = pos;
+                //pos += lookVector * moveSpeed.speed * dTime;
+                //transform.Position = pos;
+                velocity.Linear = lookVector * moveSpeed.speed;
 
                 if (!lookVector.Equals(float3.zero)) 
                 {
