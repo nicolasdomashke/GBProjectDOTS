@@ -43,7 +43,7 @@ public partial class TriggerEventSystem : SystemBase
                 var collectableInfo = CollectableInfoLookup[entityA];
                 collectableInfo.collectableCounter++;
                 ecb.SetComponent(entityA, collectableInfo);
-                Debug.Log(collectableInfo.collectableCounter);
+                //Debug.Log(collectableInfo.collectableCounter);
             }
             else if (entityBIsPlayer && entityAIsCollectable)
             {
@@ -52,7 +52,7 @@ public partial class TriggerEventSystem : SystemBase
                 var collectableInfo = CollectableInfoLookup[entityB];
                 collectableInfo.collectableCounter++;
                 ecb.SetComponent(entityB, collectableInfo);
-                Debug.Log(collectableInfo.collectableCounter);
+                //Debug.Log(collectableInfo.collectableCounter);
             }
         }
     }

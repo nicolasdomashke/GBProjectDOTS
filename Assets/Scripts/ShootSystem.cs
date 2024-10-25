@@ -21,7 +21,7 @@ public partial class ShootSystem : SystemBase
         bool isShootPressed = inputSystem.Player.Shoot.WasPressedThisFrame();
         float dTime = SystemAPI.Time.DeltaTime;
 
-        Entities.ForEach((ref LocalTransform transform, ref Shooter shoot) =>
+        Entities.WithAll<PlayerTag>().ForEach((ref LocalTransform transform, ref Shooter shoot) =>
         {
             if (shoot.gunCDCurrent > 0f)
             {
@@ -30,10 +30,11 @@ public partial class ShootSystem : SystemBase
             else if (isShootPressed)
             {
                 shoot.gunCDCurrent = shoot.gunCD;
-                float3 spawnLocation = transform.Position + transform.Forward();
+                float3 spawnLocation = transform.Position + transform.Forward() + new float3(0f, .5f, 0f);
                 Entity bullet = EntityManager.Instantiate(shoot.bullet);
                 EntityManager.SetComponentData(bullet, new LocalTransform {Position = spawnLocation, Rotation = transform.Rotation, Scale = .25f});
                 EntityManager.SetComponentData(bullet, new PhysicsVelocity {Linear = transform.Forward() * shoot.bulletSpeed});
+                EntityManager.AddComponentData(bullet, new FriendlyBulletTag {});
             }
         }).WithStructuralChanges().Run();
     }
@@ -43,3 +44,5 @@ public partial class ShootSystem : SystemBase
         inputSystem.Disable();
     }
 }
+
+public struct FriendlyBulletTag : IComponentData {}
