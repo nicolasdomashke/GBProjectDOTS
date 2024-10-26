@@ -784,6 +784,7 @@ MonoBehaviour:
   bulletPrefab: {fileID: 830782436}
   gunCD: 0.5
   bulletSpeed: 10
+  settings: {fileID: 11400000, guid: eb198845b4c431e409b3f3caea255914, type: 2}
 --- !u!114 &2075755927
 MonoBehaviour:
   m_ObjectHideFlags: 0

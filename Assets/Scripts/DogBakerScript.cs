@@ -10,8 +10,7 @@ class DogBakerScript : MonoBehaviour
     public float dashDuration;
     public float dashBoost;
     public GameObject bulletPrefab;
-    public float gunCD;
-    public float bulletSpeed;
+    public Settings settings;
 }
 
 class DogBakerScriptBaker : Baker<DogBakerScript>
@@ -32,7 +31,7 @@ class DogBakerScriptBaker : Baker<DogBakerScript>
                 Vertex1 = new float3(0f, 0f, 0f),
             });
         AddComponent(entity, new PhysicsCollider {Value = capsuleCollider});
-        AddComponent(entity, new Shooter {bullet = GetEntity(authoring.bulletPrefab, TransformUsageFlags.Dynamic), gunCD = authoring.gunCD, bulletSpeed = authoring.bulletSpeed});
+        AddComponent(entity, new Shooter {bullet = GetEntity(authoring.bulletPrefab, TransformUsageFlags.Dynamic), gunCD = authoring.settings.playerGunCD, bulletSpeed = authoring.settings.playerBulletSpeed});
     }
 }
 

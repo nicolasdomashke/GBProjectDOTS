@@ -5,16 +5,45 @@ using Unity.Physics.Systems;
 using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;
+using UnityGoogleDrive;
+using UnityGoogleDrive.Data;
+
 
 [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
 [UpdateAfter(typeof(PhysicsSystemGroup))]
 public partial class TriggerEventSystem : SystemBase
 {
     private EndSimulationEntityCommandBufferSystem ecbSystem;
+    private PlayerStats playerStats;
+    private int localCollectablesCounter;
+    private Settings config;
+    private bool useGoogleDrive;
+    private string jsonString;
 
     protected override void OnCreate()
     {
+        config = Resources.Load<Settings>("Config");
+        useGoogleDrive = config.useCloudStorage;
+        localCollectablesCounter = 0;
+
         ecbSystem = World.GetOrCreateSystemManaged<EndSimulationEntityCommandBufferSystem>();
+
+        if (useGoogleDrive) {
+            jsonString = GoogleDriveTools.DownloadFile("Stats.json");
+        }
+        else
+        {
+            jsonString = PlayerPrefs.GetString("Stats"); 
+        }
+        Debug.Log(jsonString);
+        if (jsonString.Equals(""))
+        {
+            playerStats = new PlayerStats();
+        }
+        else
+        {
+            playerStats = JsonUtility.FromJson<PlayerStats>(jsonString);
+        }
     }
 
     [BurstCompile]
@@ -43,7 +72,7 @@ public partial class TriggerEventSystem : SystemBase
                 var collectableInfo = CollectableInfoLookup[entityA];
                 collectableInfo.collectableCounter++;
                 ecb.SetComponent(entityA, collectableInfo);
-                Debug.Log($"{collectableInfo.collectableCounter}");
+                //Debug.Log($"{collectableInfo.collectableCounter}");
             }
             else if (entityBIsPlayer && entityAIsCollectable)
             {
@@ -52,7 +81,7 @@ public partial class TriggerEventSystem : SystemBase
                 var collectableInfo = CollectableInfoLookup[entityB];
                 collectableInfo.collectableCounter++;
                 ecb.SetComponent(entityB, collectableInfo);
-                Debug.Log($"{collectableInfo.collectableCounter}");
+                //Debug.Log($"{collectableInfo.collectableCounter}");
             }
         }
     }
@@ -72,5 +101,23 @@ public partial class TriggerEventSystem : SystemBase
 
         Dependency = job.Schedule(simulationSingleton, Dependency);
         ecbSystem.AddJobHandleForProducer(Dependency);
+
+        var stats = SystemAPI.GetSingleton<CollectableInfo>();
+        localCollectablesCounter = stats.collectableCounter;
+    }
+
+    protected override void OnDestroy()
+    {
+        playerStats.collectablesFound += localCollectablesCounter;
+        jsonString = JsonUtility.ToJson(playerStats);
+        Debug.Log(jsonString);
+        if (useGoogleDrive)
+        {
+            GoogleDriveTools.Upload(jsonString);
+        }
+        else
+        {
+            PlayerPrefs.SetString("Stats", jsonString);
+        } 
     }
 }
