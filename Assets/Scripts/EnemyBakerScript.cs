@@ -3,25 +3,23 @@ using UnityEngine;
 using Unity.Collections;
 using Unity.Physics;
 using Unity.Mathematics;
+using Zenject;
 
 class EnemyBakerScript : MonoBehaviour
 {
-    public float dashCD;
-    public float dashDuration;
-    public float dashBoost;
     public GameObject bulletPrefab;
-    public float gunCD;
-    public float bulletSpeed;
 }
 
 class EnemyBakerScriptBaker : Baker<EnemyBakerScript>
 {
     public override void Bake(EnemyBakerScript authoring)
     {
+        Config projConfig = ProjectContext.Instance.Container.Resolve<Config>();
+
         Entity entity = GetEntity(TransformUsageFlags.Dynamic);
         AddComponent(entity, new EnemyTag {});
-        AddComponent(entity, new Dashable {dashCD = authoring.dashCD, dashDuration = authoring.dashDuration, dashBoost = authoring.dashBoost, dashCDCurrent = 0f, dashBoostCurrent = 0f});
-        AddComponent(entity, new Shooter {bullet = GetEntity(authoring.bulletPrefab, TransformUsageFlags.Dynamic), gunCD = authoring.gunCD, bulletSpeed = authoring.bulletSpeed});
+        AddComponent(entity, new Dashable {dashCD = projConfig.settings.enemyDashCD, dashDuration = projConfig.settings.enemyDashDuration, dashBoost = projConfig.settings.enemyDashBoost, dashCDCurrent = 0f, dashBoostCurrent = 0f});
+        AddComponent(entity, new Shooter {bullet = GetEntity(authoring.bulletPrefab, TransformUsageFlags.Dynamic), gunCD = projConfig.settings.enemyGunCD, bulletSpeed = projConfig.settings.enemyBulletSpeed});
         AddComponent(entity, new EvatuationData {distanceToClosestBullet = 0f});
         var capsuleCollider = Unity.Physics.CapsuleCollider.Create(
             new CapsuleGeometry

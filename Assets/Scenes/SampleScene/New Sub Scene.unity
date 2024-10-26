@@ -681,6 +681,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: mini simple skeleton demo
       objectReference: {fileID: 0}
+    - target: {fileID: 1696834749189059949, guid: 4a46e821c58b5cd42b14eaab6d197266,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2468889828458600031, guid: 4a46e821c58b5cd42b14eaab6d197266,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -766,13 +771,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec5d5684ce0d52149911925c032ca3e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dashCD: 10
-  dashDuration: 0.07
-  dashBoost: 30
   bulletPrefab: {fileID: 8984727004568430210, guid: 2a1cbb66e8fa7304da3a47e9061103dd,
     type: 3}
-  gunCD: 3
-  bulletSpeed: 3
 --- !u!114 &1753971789
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -831,12 +831,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d908355a365b4734aac526dc141bc39e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 4
-  dashCD: 3
-  dashDuration: 0.07
-  dashBoost: 30
   bulletPrefab: {fileID: 830782436}
-  settings: {fileID: 11400000, guid: eb198845b4c431e409b3f3caea255914, type: 2}
 --- !u!114 &2075755927
 MonoBehaviour:
   m_ObjectHideFlags: 0

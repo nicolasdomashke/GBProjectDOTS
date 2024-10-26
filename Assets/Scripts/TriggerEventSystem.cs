@@ -7,6 +7,7 @@ using Unity.Jobs;
 using UnityEngine;
 using UnityGoogleDrive;
 using UnityGoogleDrive.Data;
+using Zenject;
 
 
 [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
@@ -16,14 +17,14 @@ public partial class TriggerEventSystem : SystemBase
     private EndSimulationEntityCommandBufferSystem ecbSystem;
     private PlayerStats playerStats;
     private int localCollectablesCounter;
-    private Settings config;
+    private Config config;
     private bool useGoogleDrive;
     private string jsonString;
 
     protected override void OnCreate()
     {
-        config = Resources.Load<Settings>("Config");
-        useGoogleDrive = config.useCloudStorage;
+        config = ProjectContext.Instance.Container.Resolve<Config>();
+        useGoogleDrive = config.settings.useCloudStorage;
         localCollectablesCounter = 0;
 
         ecbSystem = World.GetOrCreateSystemManaged<EndSimulationEntityCommandBufferSystem>();
