@@ -22,6 +22,7 @@ public partial class KillEventSystem : SystemBase
     [BurstCompile]
     struct KillEventJob : ICollisionEventsJob
     {
+        [ReadOnly] public ComponentLookup<LocalTransform> LocalTransformLookup;
         [ReadOnly] public ComponentLookup<PlayerTag> PlayerTagLookup;
         [ReadOnly] public ComponentLookup<EnemyTag> EnemyTagLookup;
         [ReadOnly] public ComponentLookup<BulletTag> BulletTagLookup;
@@ -47,14 +48,20 @@ public partial class KillEventSystem : SystemBase
                 if (entityBIsPlayer)
                 {
                     ecb.DestroyEntity(entityA);
+                    var transform = LocalTransformLookup[entityB];
+                    Entity particles = ecb.Instantiate(PlayerTagLookup[entityB].deathEffect);
+                    ecb.SetComponent(particles, new LocalTransform {Position = transform.Position, Rotation = Quaternion.Euler(-90, 0, 0),  Scale = 1f});
                     ecb.SetComponent(entityB, new LocalTransform {Scale = 0f});
                     ecb.RemoveComponent<PlayerTag>(entityB);
                     Debug.Log("You died!");
                 }
                 else if (entityBIsEnemy)
                 {
+                    var transform = LocalTransformLookup[entityB];
+                    Entity particles = ecb.Instantiate(EnemyTagLookup[entityB].deathEffect);
+                    ecb.SetComponent(particles, new LocalTransform {Position = transform.Position, Rotation = Quaternion.Euler(-90, 0, 0),  Scale = 1f});
                     ecb.SetComponent(entityA, new LocalTransform {Scale = 0f});
-                    ecb.RemoveComponent<PlayerTag>(entityA);
+                    ecb.RemoveComponent<EnemyTag>(entityA);
                     ecb.DestroyEntity(entityB);
                     Debug.Log("Enemy died!");
                 }
@@ -64,13 +71,19 @@ public partial class KillEventSystem : SystemBase
             {
                 if (entityAIsPlayer)
                 {
+                    ecb.DestroyEntity(entityB);
+                    var transform = LocalTransformLookup[entityA];
+                    Entity particles = ecb.Instantiate(PlayerTagLookup[entityA].deathEffect);
+                    ecb.SetComponent(particles, new LocalTransform {Position = transform.Position, Rotation = Quaternion.Euler(-90, 0, 0), Scale = 1f});
                     ecb.SetComponent(entityA, new LocalTransform {Scale = 0f});
                     ecb.RemoveComponent<PlayerTag>(entityA);
-                    ecb.DestroyEntity(entityB);
                     Debug.Log("You died!");
                 }
                 else if (entityAIsEnemy)
                 {
+                    var transform = LocalTransformLookup[entityA];
+                    Entity particles = ecb.Instantiate(EnemyTagLookup[entityA].deathEffect);
+                    ecb.SetComponent(particles, new LocalTransform {Position = transform.Position, Rotation = Quaternion.Euler(-90, 0, 0), Scale = 1f});
                     ecb.SetComponent(entityA, new LocalTransform {Scale = 0f});
                     ecb.RemoveComponent<EnemyTag>(entityA);
                     ecb.DestroyEntity(entityB);
@@ -87,6 +100,7 @@ public partial class KillEventSystem : SystemBase
 
         var job = new KillEventJob
         {
+            LocalTransformLookup = GetComponentLookup<LocalTransform>(true),
             PlayerTagLookup = GetComponentLookup<PlayerTag>(true),
             EnemyTagLookup = GetComponentLookup<EnemyTag>(true),
             BulletTagLookup = GetComponentLookup<BulletTag>(true),

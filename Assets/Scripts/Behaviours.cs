@@ -44,6 +44,8 @@ public class ShootingBehaviour : IBehaviour
         entityManager.SetComponentData(bullet, new LocalTransform {Position = spawnLocation, Rotation = transform.Rotation, Scale = .25f});
         entityManager.SetComponentData(bullet, new PhysicsVelocity {Linear = transform.Forward() * shoot.bulletSpeed});
         entityManager.SetComponentData(entity, shoot);
+        Entity particles = entityManager.Instantiate(shoot.shootEffect);
+        entityManager.SetComponentData(particles, new LocalTransform {Position = spawnLocation, Rotation = transform.Rotation, Scale = 1f});
         //Debug.Log("shoot");
     }
 }

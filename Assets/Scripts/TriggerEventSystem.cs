@@ -36,7 +36,7 @@ public partial class TriggerEventSystem : SystemBase
         {
             jsonString = PlayerPrefs.GetString("Stats"); 
         }
-        Debug.Log(jsonString);
+        //Debug.Log(jsonString);
         if (jsonString.Equals(""))
         {
             playerStats = new PlayerStats();

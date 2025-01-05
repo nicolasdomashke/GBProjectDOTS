@@ -8,6 +8,8 @@ using Zenject;
 class EnemyBakerScript : MonoBehaviour
 {
     public GameObject bulletPrefab;
+    public GameObject shootEffect;
+    public GameObject deathEffect;
 }
 
 class EnemyBakerScriptBaker : Baker<EnemyBakerScript>
@@ -17,9 +19,9 @@ class EnemyBakerScriptBaker : Baker<EnemyBakerScript>
         Config projConfig = ProjectContext.Instance.Container.Resolve<Config>();
 
         Entity entity = GetEntity(TransformUsageFlags.Dynamic);
-        AddComponent(entity, new EnemyTag {});
+        AddComponent(entity, new EnemyTag {deathEffect = GetEntity(authoring.deathEffect, TransformUsageFlags.Dynamic)});
         AddComponent(entity, new Dashable {dashCD = projConfig.settings.enemyDashCD, dashDuration = projConfig.settings.enemyDashDuration, dashBoost = projConfig.settings.enemyDashBoost, dashCDCurrent = 0f, dashBoostCurrent = 0f});
-        AddComponent(entity, new Shooter {bullet = GetEntity(authoring.bulletPrefab, TransformUsageFlags.Dynamic), gunCD = projConfig.settings.enemyGunCD, bulletSpeed = projConfig.settings.enemyBulletSpeed});
+        AddComponent(entity, new Shooter {bullet = GetEntity(authoring.bulletPrefab, TransformUsageFlags.Dynamic), shootEffect = GetEntity(authoring.shootEffect, TransformUsageFlags.Dynamic), gunCD = projConfig.settings.enemyGunCD, bulletSpeed = projConfig.settings.enemyBulletSpeed});
         AddComponent(entity, new EvatuationData {distanceToClosestBullet = 0f});
         var capsuleCollider = Unity.Physics.CapsuleCollider.Create(
             new CapsuleGeometry
@@ -36,4 +38,6 @@ public struct RotationSpeed : IComponentData
 {
     public float speed;
 }
-public struct EnemyTag : IComponentData {}
+public struct EnemyTag : IComponentData {
+    public Entity deathEffect;
+}

@@ -773,6 +773,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bulletPrefab: {fileID: 8984727004568430210, guid: 2a1cbb66e8fa7304da3a47e9061103dd,
     type: 3}
+  shootEffect: {fileID: 1859883509635952562, guid: eecd1378947d0f64796f628c0004ba04,
+    type: 3}
+  deathEffect: {fileID: 1442733582193098029, guid: 661bd37e5b0894f4e86bbd6a16365410,
+    type: 3}
 --- !u!114 &1753971789
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -832,6 +836,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bulletPrefab: {fileID: 830782436}
+  shootEffect: {fileID: 6549598497158366979, guid: cf0cbfe3d55e3fb40b328afa509f8a82,
+    type: 3}
+  deathEffect: {fileID: 1670242605387329644, guid: d9cfb11b099038346a70fb7ff438afc7,
+    type: 3}
 --- !u!114 &2075755927
 MonoBehaviour:
   m_ObjectHideFlags: 0

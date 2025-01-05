@@ -35,6 +35,8 @@ public partial class ShootSystem : SystemBase
                 EntityManager.SetComponentData(bullet, new LocalTransform {Position = spawnLocation, Rotation = transform.Rotation, Scale = .25f});
                 EntityManager.SetComponentData(bullet, new PhysicsVelocity {Linear = transform.Forward() * shoot.bulletSpeed});
                 EntityManager.AddComponentData(bullet, new FriendlyBulletTag {});
+                Entity particles = EntityManager.Instantiate(shoot.shootEffect);
+                EntityManager.SetComponentData(particles, new LocalTransform {Position = spawnLocation, Rotation = transform.Rotation, Scale = 1f});
             }
         }).WithStructuralChanges().Run();
     }

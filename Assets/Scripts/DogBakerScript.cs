@@ -7,6 +7,8 @@ using Zenject;
 class DogBakerScript : MonoBehaviour
 {
     public GameObject bulletPrefab;
+    public GameObject shootEffect;
+    public GameObject deathEffect;
 }
 
 class DogBakerScriptBaker : Baker<DogBakerScript>
@@ -19,7 +21,7 @@ class DogBakerScriptBaker : Baker<DogBakerScript>
         Entity entity = GetEntity(TransformUsageFlags.Dynamic);
         AddComponent(entity, new MovementSpeed { speed = projConfig.settings.playerSpeed });
         AddComponent(entity, new InputEnabled {});
-        AddComponent(entity, new PlayerTag {});
+        AddComponent(entity, new PlayerTag {deathEffect = GetEntity(authoring.deathEffect, TransformUsageFlags.Dynamic)});
         AddComponent(entity, new CollectableInfo {collectableCounter = 0 });
         AddComponent(entity, new Dashable {dashCD = projConfig.settings.playerDashCD, dashDuration = projConfig.settings.playerDashDuration, dashBoost = projConfig.settings.playerDashBoost, dashCDCurrent = 0f, dashBoostCurrent = 0f});
         var capsuleCollider = Unity.Physics.CapsuleCollider.Create(
@@ -30,7 +32,7 @@ class DogBakerScriptBaker : Baker<DogBakerScript>
                 Vertex1 = new float3(0f, 0f, 0f),
             });
         AddComponent(entity, new PhysicsCollider {Value = capsuleCollider});
-        AddComponent(entity, new Shooter {bullet = GetEntity(authoring.bulletPrefab, TransformUsageFlags.Dynamic), gunCD = projConfig.settings.playerGunCD, bulletSpeed = projConfig.settings.playerBulletSpeed});
+        AddComponent(entity, new Shooter {bullet = GetEntity(authoring.bulletPrefab, TransformUsageFlags.Dynamic), shootEffect = GetEntity(authoring.shootEffect, TransformUsageFlags.Dynamic), gunCD = projConfig.settings.playerGunCD, bulletSpeed = projConfig.settings.playerBulletSpeed});
     }
 }
 
@@ -51,6 +53,7 @@ public struct Dashable : IComponentData
 public struct Shooter : IComponentData
 {
     public Entity bullet;
+    public Entity shootEffect;
     public float gunCD;
     public float bulletSpeed;
     [HideInInspector] public float gunCDCurrent;
@@ -62,4 +65,7 @@ public struct CollectableInfo : IComponentData
 }
 
 public struct InputEnabled : IComponentData {}
-public struct PlayerTag : IComponentData {}
+public struct PlayerTag : IComponentData 
+{
+    public Entity deathEffect;
+}
