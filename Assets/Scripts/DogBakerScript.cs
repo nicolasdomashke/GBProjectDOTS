@@ -9,6 +9,7 @@ class DogBakerScript : MonoBehaviour
     public GameObject bulletPrefab;
     public GameObject shootEffect;
     public GameObject deathEffect;
+    public GameObject animPrefab;
 }
 
 class DogBakerScriptBaker : Baker<DogBakerScript>
@@ -24,6 +25,8 @@ class DogBakerScriptBaker : Baker<DogBakerScript>
         AddComponent(entity, new PlayerTag {deathEffect = GetEntity(authoring.deathEffect, TransformUsageFlags.Dynamic)});
         AddComponent(entity, new CollectableInfo {collectableCounter = 0 });
         AddComponent(entity, new Dashable {dashCD = projConfig.settings.playerDashCD, dashDuration = projConfig.settings.playerDashDuration, dashBoost = projConfig.settings.playerDashBoost, dashCDCurrent = 0f, dashBoostCurrent = 0f});
+        var animObject = Object.Instantiate(authoring.animPrefab);
+        AddComponentObject(entity, new PlayerAnim {animObject = animObject, anim = animObject.GetComponent<Animator>()});
         var capsuleCollider = Unity.Physics.CapsuleCollider.Create(
             new CapsuleGeometry
             {
@@ -68,4 +71,10 @@ public struct InputEnabled : IComponentData {}
 public struct PlayerTag : IComponentData 
 {
     public Entity deathEffect;
+}
+
+public class PlayerAnim : IComponentData
+{
+    public GameObject animObject;
+    public Animator anim;
 }

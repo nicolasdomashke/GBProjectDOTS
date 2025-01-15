@@ -111,7 +111,7 @@ public partial class TriggerEventSystem : SystemBase
     {
         playerStats.collectablesFound += localCollectablesCounter;
         jsonString = JsonUtility.ToJson(playerStats);
-        Debug.Log(jsonString);
+        //Debug.Log(jsonString);
         if (useGoogleDrive)
         {
             GoogleDriveTools.Upload(jsonString);
