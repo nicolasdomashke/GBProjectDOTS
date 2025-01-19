@@ -7,6 +7,7 @@ using Unity.Jobs;
 using UnityEngine;
 using UnityGoogleDrive;
 using UnityGoogleDrive.Data;
+using System.Threading.Tasks;
 using Zenject;
 
 
@@ -23,12 +24,21 @@ public partial class TriggerEventSystem : SystemBase
 
     protected override void OnCreate()
     {
-        config = ProjectContext.Instance.Container.Resolve<Config>();
-        useGoogleDrive = config.settings.useCloudStorage;
         localCollectablesCounter = 0;
 
         ecbSystem = World.GetOrCreateSystemManaged<EndSimulationEntityCommandBufferSystem>();
 
+        ConfigLoad();
+    }
+    public async void ConfigLoad()
+    {
+        await ProjectContextLoad();
+    }
+
+    async Task ProjectContextLoad()
+    {
+        config = ProjectContext.Instance.Container.Resolve<Config>();
+        useGoogleDrive = config.settings.useCloudStorage;
         if (useGoogleDrive) {
             jsonString = GoogleDriveTools.DownloadFile("Stats.json");
         }

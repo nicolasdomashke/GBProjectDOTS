@@ -2,6 +2,7 @@ using Unity.Entities;
 using UnityEngine;
 using Unity.Physics;
 using Unity.Mathematics;
+using System.Threading.Tasks;
 using Zenject;
 
 class DogBakerScript : MonoBehaviour
@@ -14,17 +15,17 @@ class DogBakerScript : MonoBehaviour
 
 class DogBakerScriptBaker : Baker<DogBakerScript>
 {
+    //public Config projConfig;
 
     public override void Bake(DogBakerScript authoring)
     {
-        Config projConfig = ProjectContext.Instance.Container.Resolve<Config>();
-
         Entity entity = GetEntity(TransformUsageFlags.Dynamic);
-        AddComponent(entity, new MovementSpeed { speed = projConfig.settings.playerSpeed });
+        ConfigLoad(entity, authoring);
+        //AddComponent(entity, new MovementSpeed { speed = projConfig.settings.playerSpeed });
         AddComponent(entity, new InputEnabled {});
         AddComponent(entity, new PlayerTag {deathEffect = GetEntity(authoring.deathEffect, TransformUsageFlags.Dynamic)});
         AddComponent(entity, new CollectableInfo {collectableCounter = 0 });
-        AddComponent(entity, new Dashable {dashCD = projConfig.settings.playerDashCD, dashDuration = projConfig.settings.playerDashDuration, dashBoost = projConfig.settings.playerDashBoost, dashCDCurrent = 0f, dashBoostCurrent = 0f});
+        //AddComponent(entity, new Dashable {dashCD = projConfig.settings.playerDashCD, dashDuration = projConfig.settings.playerDashDuration, dashBoost = projConfig.settings.playerDashBoost, dashCDCurrent = 0f, dashBoostCurrent = 0f});
         var animObject = Object.Instantiate(authoring.animPrefab);
         AddComponentObject(entity, new PlayerAnim {animObject = animObject, anim = animObject.GetComponent<Animator>()});
         var capsuleCollider = Unity.Physics.CapsuleCollider.Create(
@@ -35,6 +36,19 @@ class DogBakerScriptBaker : Baker<DogBakerScript>
                 Vertex1 = new float3(0f, 0f, 0f),
             });
         AddComponent(entity, new PhysicsCollider {Value = capsuleCollider});
+        //AddComponent(entity, new Shooter {bullet = GetEntity(authoring.bulletPrefab, TransformUsageFlags.Dynamic), shootEffect = GetEntity(authoring.shootEffect, TransformUsageFlags.Dynamic), gunCD = projConfig.settings.playerGunCD, bulletSpeed = projConfig.settings.playerBulletSpeed});
+    }
+
+    public async void ConfigLoad(Entity e, DogBakerScript authoring)
+    {
+        await ProjectContextLoad(e, authoring);
+    }
+
+    async Task ProjectContextLoad(Entity entity, DogBakerScript authoring)
+    {
+        Config projConfig = ProjectContext.Instance.Container.Resolve<Config>();
+        AddComponent(entity, new MovementSpeed { speed = projConfig.settings.playerSpeed });
+        AddComponent(entity, new Dashable {dashCD = projConfig.settings.playerDashCD, dashDuration = projConfig.settings.playerDashDuration, dashBoost = projConfig.settings.playerDashBoost, dashCDCurrent = 0f, dashBoostCurrent = 0f});
         AddComponent(entity, new Shooter {bullet = GetEntity(authoring.bulletPrefab, TransformUsageFlags.Dynamic), shootEffect = GetEntity(authoring.shootEffect, TransformUsageFlags.Dynamic), gunCD = projConfig.settings.playerGunCD, bulletSpeed = projConfig.settings.playerBulletSpeed});
     }
 }
